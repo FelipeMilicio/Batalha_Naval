@@ -36,6 +36,14 @@ def iniciar_batalha_naval():
                     return False
         return True
     
+    def marcar_area_ao_redor(matriz, linha1, linha2, coluna1, coluna2, orientacao):
+        #os for são para pegar a área ao redor do barco
+        for i in range(linha1 - 1, linha2 + 2):
+            for j in range(coluna1 - 1, coluna2 + 2):
+                #garante que não vai tentar colocar uma marcação fora da matriz
+                if 0 <= i < 10 and 0 <= j < 10:
+                    if matriz[i][j] == ' ':
+                        matriz[i][j] = 'O'
 
         
     #def para colocar o barco
@@ -52,6 +60,8 @@ def iniciar_batalha_naval():
             inicio = min(coluna1, coluna2)
             for i in range(tamanho):
                 matriz[linha1][inicio + i] = valor
+
+        marcar_area_ao_redor(matriz, linha1, linha2, coluna1, coluna2, orientacao)
         return True
 
     print("Vamos colocar os seus barcos!")
