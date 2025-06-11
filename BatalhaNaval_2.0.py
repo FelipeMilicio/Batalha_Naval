@@ -1,7 +1,10 @@
 import random
 import time
+contador_vitorias_player = 0
+contador_vitorias_bot = 0
 
 def iniciar_batalha_naval():
+    global contador_vitorias_bot, contador_vitorias_player
     def criar_tabuleiro():
         tabuleiro = []
         for i in range(10):
@@ -49,12 +52,12 @@ def iniciar_batalha_naval():
             for i in range(max(0, linha1 - 1), min(10, linha2 + 2)):
                 for j in range(max(0, coluna1 - 1), min(10, coluna1 + 2)):
                     if matriz[i][j] == ' ':
-                        matriz[i][j] = 'O'
+                        matriz[i][j] = '-'
         elif orientacao == "horizontal":
             for i in range(max(0, linha1 - 1), min(10, linha1 + 2)):
                 for j in range(max(0, coluna1 - 1), min(10, coluna2 + 2)):
                     if matriz[i][j] == ' ':
-                        matriz[i][j] = 'O'
+                        matriz[i][j] = '-'
 
     # def para colocar o barco
     def colocar_barco(matriz, linha1, linha2, coluna1, coluna2, orientacao, tamanho):
@@ -75,6 +78,7 @@ def iniciar_batalha_naval():
 
     def posicionar_barcos_jogador(tabuleiro):
         print("\033[4:36m𝔹𝕒𝕥𝕒𝕝𝕙𝕒 ℕ𝕒𝕧𝕒𝕝\033[m")
+        print("Na hora do ataque, a letra 'H' significa 'hit' ou 'acertou' e a letra 'M' significa 'miss' ou 'errou' para retornar a informação do ataque.")
         print("Vamos colocar os seus barcos!")
         contadores_local = contadores.copy()  # Usar uma cópia para não alterar o original
         while any(contadores_local.values()):
@@ -202,6 +206,11 @@ def iniciar_batalha_naval():
                 return False
 
             linha_index = ord(linha) - ord('A')
+            if tabuleiro_jogador_ataques[linha_index][coluna] in ['H', 'M']:
+                print("Você já atacou aqui!")
+                time.sleep(1.5)
+                return False
+
             return atacar(tabuleiro_computador, tabuleiro_jogador_ataques, linha_index, coluna)
 
         except ValueError:
@@ -239,10 +248,10 @@ def iniciar_batalha_naval():
 
         # Verificar vitória do jogador
         if verificar_vitoria(tabuleiro_computador):
+            contador_vitorias_player += 1
             print("\033[4:35mParabéns! Você venceu o computador!\033[m")
             print("\033[0:35mJogo feito por: \nFelipe Milicio\nGiovane Holanda\nMaria L. Batistel\033[m")
-            jogo_ativo = False
-            break
+            return
 
         # Turno do Computador
         print("\033[4:36m\nVez do computador atacar...\033[m")
@@ -250,9 +259,16 @@ def iniciar_batalha_naval():
 
         # Verificar vitória do computador
         if verificar_vitoria(tabuleiro_jogador):
+            contador_vitorias_bot += 1
             print("\033[4:35mO computador venceu!\033[m")
-            jogo_ativo = False
+            return
+        
+# loop de partidas
+def loop_jogo():
+    while True:
+        iniciar_batalha_naval()
+        resposta = input("Deseja jogar novamente? (1-Sim, 2-Não): ")
+        if resposta != "1":
             break
 
-
-iniciar_batalha_naval()
+loop_jogo()
